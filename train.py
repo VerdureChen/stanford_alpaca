@@ -30,9 +30,12 @@ DEFAULT_BOS_TOKEN = "<s>"
 DEFAULT_UNK_TOKEN = "<unk>"
 PROMPT_DICT = {
     "prompt_input": (
-        "Below is an instruction that describes a task, paired with an input that provides further context. "
-        "Write a response that appropriately completes the request.\n\n"
-        "### Instruction:\n{instruction}\n\n### Input:\n{input}\n\n### Response:"
+        "Rank the {num} passages based on their relevance to the search query. "
+        "The passages will be listed in descending order using identifiers, "
+        "and the most relevant passages should be listed first, and the output format should be [] > [] > etc\n\n"
+        "### Query:\n{instruction}\n\n"
+        "### Candidates:\n{input}\n\n"
+        "### Response:"
     ),
     "prompt_no_input": (
         "Below is an instruction that describes a task. "
@@ -175,6 +178,7 @@ class DataCollatorForSupervisedDataset(object):
 def make_supervised_data_module(tokenizer: transformers.PreTrainedTokenizer, data_args) -> Dict:
     """Make dataset and collator for supervised fine-tuning."""
     train_dataset = SupervisedDataset(tokenizer=tokenizer, data_path=data_args.data_path)
+    eval_dataset = SupervisedDataset(tokenizer=tokenizer, data_path=data_args.eval_data_path)
     data_collator = DataCollatorForSupervisedDataset(tokenizer=tokenizer)
     return dict(train_dataset=train_dataset, eval_dataset=None, data_collator=data_collator)
 
